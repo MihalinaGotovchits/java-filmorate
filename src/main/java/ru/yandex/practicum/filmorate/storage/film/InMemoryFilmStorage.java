@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.LineLengthException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -20,9 +21,21 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
+        if (film.getName() == null || film.getName().isBlank()) {
+            log.error(film.toString());
+            throw new ConditionsNotMetException("Название фильма не может быть пустым");
+        }
+        if (film.getDescription().length() > 200) {
+            log.error(film.toString());
+            throw new LineLengthException("Описание фильма не должно превышать 200 символов");
+        }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.error(film.toString());
             throw new ConditionsNotMetException("Дата выхода фильма не может быть раньше 28 декабря 1895 года");
+        }
+        if (film.getDuration() < 0) {
+            log.error(film.toString());
+            throw new ConditionsNotMetException("Продолжительность фильма не может быть меньше 0");
         }
         film.setId(getNextId());
         log.trace("Фильму {} присвоен ID № {}", film.getName(), film.getId());
@@ -40,11 +53,23 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
+            if (newFilm.getName() == null || newFilm.getName().isBlank()) {
+                log.error(newFilm.toString());
+                throw new ConditionsNotMetException("Название фильма не может быть пустым");
+            }
+            if (newFilm.getDescription().length() > 200) {
+                log.error(newFilm.toString());
+                throw new LineLengthException("Описание фильма не должно превышать 200 символов");
+            }
             if (newFilm.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 log.error(newFilm.toString());
                 throw new ConditionsNotMetException("Дата выхода фильма не может быть раньше 28 декабря 1895 года");
             }
-            oldFilm.setId(newFilm.getId());
+            if (newFilm.getDuration() < 0) {
+                log.error(newFilm.toString());
+                throw new ConditionsNotMetException("Продолжительность фильма не может быть меньше 0");
+            }
+            // если фильм найдена и все условия соблюдены, обновляем её содержимое
             oldFilm.setName(newFilm.getName());
             oldFilm.setDescription(newFilm.getDescription());
             oldFilm.setReleaseDate(newFilm.getReleaseDate());
@@ -53,7 +78,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             return oldFilm;
         }
         log.error(newFilm.toString());
-        throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+        throw new NotFoundException("Пост с id = " + newFilm.getId() + " не найден");
     }
 
     @Override

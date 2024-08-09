@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,9 +17,26 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
+        if (user.getEmail() == null || user.getEmail().isBlank() || (!user.getEmail().contains("@"))) {
+            log.error(user.toString());
+            throw new ConditionsNotMetException("E-mail не может быть пустым и должен содержать символ '@'");
+        }
+        if (user.getLogin().isEmpty() || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            log.error(user.toString());
+            throw new ConditionsNotMetException("Логин не может содержать пробелы и быть пустым");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error(user.toString());
+            throw new ConditionsNotMetException("Дата рождения не может быть в будующем");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            log.info(user.toString());
+            user.setName(user.getLogin());
+        }
         user.setId(getNextId());
-        log.debug(user.toString());
+        log.trace("Пользователю {} присвоен Id № {}", user.getName(), user.getId());
         users.put(user.getId(), user);
+        log.info("Пользователь {} добавлен", user.getName());
         return user;
     }
 
