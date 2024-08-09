@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.LineLengthException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilmControllerTest {
-    private FilmController filmController = new FilmController();
+    private InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
 
     @Test
     public void testCreateFilm() {
@@ -23,7 +23,7 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(100)
                 .build();
-        Film createdFilm = filmController.create(film);
+        Film createdFilm = inMemoryFilmStorage.create(film);
         assertEquals(film, createdFilm);
     }
 
@@ -36,7 +36,7 @@ public class FilmControllerTest {
                 .duration(100)
                 .build();
         try {
-            filmController.create(film);
+            inMemoryFilmStorage.create(film);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("Название фильма не может быть пустым", e.getMessage());
@@ -55,7 +55,7 @@ public class FilmControllerTest {
                 .duration(100)
                 .build();
         try {
-            filmController.create(film);
+            inMemoryFilmStorage.create(film);
             fail("Expected LineLengthException");
         } catch (LineLengthException e) {
             assertEquals("Описание фильма не должно превышать 200 символов", e.getMessage());
@@ -78,8 +78,8 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(100)
                 .build();
-        filmController.create(film);
-        Film updatedFilm = filmController.update(film);
+        inMemoryFilmStorage.create(film);
+        Film updatedFilm = inMemoryFilmStorage.update(film);
         assertEquals(film, updatedFilm);
         assertEquals(film.getName(), updatedFilm.getName());
         assertEquals(film.getDescription(), updatedFilm.getDescription());
@@ -96,7 +96,7 @@ public class FilmControllerTest {
                 .duration(100)
                 .build();
         try {
-            filmController.update(film);
+            inMemoryFilmStorage.update(film);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("Id должен быть указан", e.getMessage());
@@ -113,7 +113,7 @@ public class FilmControllerTest {
                 .duration(100)
                 .build();
         try {
-            filmController.update(film);
+            inMemoryFilmStorage.update(film);
             fail("Expected NotFoundException");
         } catch (NotFoundException e) {
             assertEquals("Пост с id = " + film.getId() + " не найден", e.getMessage());
@@ -134,9 +134,9 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(100)
                 .build();
-        filmController.create(film1);
-        filmController.create(film2);
-        Collection<Film> films = filmController.findAllFilms();
+        inMemoryFilmStorage.create(film1);
+        inMemoryFilmStorage.create(film2);
+        Collection<Film> films = inMemoryFilmStorage.getAllFilms();
         assertEquals(2, films.size());
         assertTrue(films.contains(film1));
         assertTrue(films.contains(film2));
