@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
     private User user;
-    private final UserController userController = new UserController();
+    private final InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
 
     @Test
     public void testInvalidEmail() {
@@ -24,7 +24,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
         try {
-            userController.create(user);
+            inMemoryUserStorage.create(user);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("E-mail не может быть пустым и должен содержать символ '@'", e.getMessage());
@@ -41,7 +41,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
         try {
-            userController.create(user);
+            inMemoryUserStorage.create(user);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("E-mail не может быть пустым и должен содержать символ '@'", e.getMessage());
@@ -57,7 +57,7 @@ public class UserControllerTest {
                 .name("Name")
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
-        User createdUser = userController.create(user);
+        User createdUser = inMemoryUserStorage.create(user);
         assertEquals(user, createdUser);
     }
 
@@ -71,7 +71,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
         try {
-            userController.create(user);
+            inMemoryUserStorage.create(user);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("Логин не может содержать пробелы и быть пустым", e.getMessage());
@@ -88,7 +88,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
         try {
-            userController.create(user);
+            inMemoryUserStorage.create(user);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("Логин не может содержать пробелы и быть пустым", e.getMessage());
@@ -104,8 +104,8 @@ public class UserControllerTest {
                 .name("Name")
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
-        userController.create(user);
-        User updatedUser = userController.update(user);
+        inMemoryUserStorage.create(user);
+        User updatedUser = inMemoryUserStorage.update(user);
         assertEquals(user, updatedUser);
         assertEquals(user.getName(), updatedUser.getName());
         assertEquals(user.getEmail(), updatedUser.getEmail());
@@ -123,7 +123,7 @@ public class UserControllerTest {
                 .build();
         user.setId(null);
         try {
-            userController.update(user);
+            inMemoryUserStorage.update(user);
             fail("Expected ConditionsNotMetException");
         } catch (ConditionsNotMetException e) {
             assertEquals("Id должен быть указан", e.getMessage());
@@ -146,9 +146,9 @@ public class UserControllerTest {
                 .name("Name")
                 .birthday(LocalDate.of(2001, 12, 13))
                 .build();
-        userController.create(user);
-        userController.create(user2);
-        Collection<User> users = userController.findAllFilms();
+        inMemoryUserStorage.create(user);
+        inMemoryUserStorage.create(user2);
+        Collection<User> users = inMemoryUserStorage.getAllUsers();
         assertEquals(2, users.size());
         assertTrue(users.contains(user));
         assertTrue(users.contains(user2));
