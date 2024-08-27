@@ -3,4 +3,4 @@
 
 В ходе работы над приложением была создана модель базы данных для данного приложения.
 # Модель базы данных
-[https://drive.google.com/file/d/1AeOeJnUthoOqOaJeXIYCa3JRuGNGxoT1/view?usp=sharing](https://github.com/MihalinaGotovchits/java-filmorate/blob/main/filmorate.png)
+![filmorate](https://github.com/user-attachments/assets/b79eefaa-914a-4bca-a245-615c188d0445)
