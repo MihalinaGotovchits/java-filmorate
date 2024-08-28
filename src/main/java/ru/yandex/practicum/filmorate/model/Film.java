@@ -28,4 +28,6 @@ public class Film {
     private int duration;
     @Min(value = 0)
     private int grade;
+    private String genre;
+    private String rating;
 }
