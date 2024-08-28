@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -29,5 +31,5 @@ public class Film {
     @Min(value = 0)
     private int grade;
     private String genre;
-    private String rating;
+    private Set<Genre> genres = new HashSet<>();
 }
