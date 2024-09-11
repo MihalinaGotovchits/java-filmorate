@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -14,7 +13,6 @@ import static org.assertj.core.api.Assertions.*;
 @JdbcTest
 @Import({JdbcMpaRepository.class})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DisplayName("JdbcMpaRepository integration tests")
 class JdbcMpaRepositoryTest {
     private static final int TEST_MPA_ID = 1;
     private static final int COUNT_OF_ELEMENTS = 5;

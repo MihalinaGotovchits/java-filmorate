@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -16,7 +15,6 @@ import static org.assertj.core.api.Assertions.*;
 @JdbcTest
 @Import({JdbcGenreRepository.class})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DisplayName("JdbcGenreRepository integration tests")
 class JdbcGenreRepositoryTest {
     private static final int TEST_GENRE_ID = 1;
     private static final int COUNT_OF_ELEMENTS = 6;
@@ -26,7 +24,7 @@ class JdbcGenreRepositoryTest {
     static Genre getTestGenre() {
         return Genre.builder()
                 .id(TEST_GENRE_ID)
-                .name("Триллер")
+                .name("Комедия")
                 .build();
     }
 

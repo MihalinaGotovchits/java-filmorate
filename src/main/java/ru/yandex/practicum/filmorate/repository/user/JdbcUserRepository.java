@@ -41,7 +41,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User getUserById(Long userId) {
-        String sqlQuery = "SELECT * FROM user WHERE user_id = :user_id;";
+        String sqlQuery = "SELECT * FROM users WHERE user_id = :user_id;";
         return jdbc.queryForObject(sqlQuery, new MapSqlParameterSource("user_id", userId), this::mapRowToUser);
     }
 
@@ -67,7 +67,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        String sqlQuery = "MERGE INTO friendship (user_id, friend_id) VALUES (:user_id, :friend_id);";
+        String sqlQuery = "INSERT INTO friendship (user_id, friend_id) VALUES (:user_id, :friend_id);";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("user_id", userId);

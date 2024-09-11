@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.repository;
 
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -16,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest
 @Import({JdbcUserRepository.class})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DisplayName("JdbcUserRepository integration tests")
+@Sql(scripts = {"/schema.sql", "/test-data.sql"}, config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 class JdbcUserRepositoryTest {
     private static final long TEST_USER_ID = 1L;
     private static final long COUNT_OF_ELEMENTS = 2L;
@@ -26,7 +28,7 @@ class JdbcUserRepositoryTest {
     static User getTestUser() {
         return User.builder()
                 .id(TEST_USER_ID)
-                .email("email@email.ru")
+                .email("yandex@email.ru")
                 .login("user")
                 .name("name")
                 .birthday(LocalDate.parse("2000-03-22"))
@@ -35,7 +37,7 @@ class JdbcUserRepositoryTest {
 
     static User getTestNewUser() {
         return User.builder()
-                .email("emailNew@email.ru")
+                .email("emailNew1@email.ru")
                 .login("user2")
                 .name("name2")
                 .birthday(LocalDate.parse("1995-10-09"))
@@ -99,7 +101,6 @@ class JdbcUserRepositoryTest {
     }
 
     @Test
-    @DisplayName("getFriends() returns actual friend list.")
     void getFriends() {
         jdbcUserRepository.addFriend(TEST_USER_ID, COUNT_OF_ELEMENTS);
 

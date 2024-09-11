@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest
 @Import(JdbcFilmRepository.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DisplayName("JdbcFilmRepository integration tests")
+@Sql(scripts = {"/schema.sql", "/test-data.sql"}, config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 class JdbcFilmRepositoryTest {
     private static final long TEST_FILM_ID = 1L;
     private static final int COUNT_OF_ELEMENTS = 3;
@@ -112,14 +113,14 @@ class JdbcFilmRepositoryTest {
     }
 
     @Test
-    void getMostPopular() {
+    void getPopular() {
         jdbcFilmRepository.addLike((long) COUNT_OF_ELEMENTS, TEST_USER_ID);
         jdbcFilmRepository.addLike((long) COUNT_OF_ELEMENTS, TEST_USER_ID + 1);
 
         jdbcFilmRepository.addLike(TEST_FILM_ID, TEST_USER_ID);
 
         assertThat(jdbcFilmRepository.getPopularFilms(2))
-                .containsExactly((Film) jdbcFilmRepository.getPopularFilms(COUNT_OF_ELEMENTS),
+                .containsExactly(jdbcFilmRepository.getFilmById((long) COUNT_OF_ELEMENTS),
                         jdbcFilmRepository.getFilmById(TEST_FILM_ID));
     }
 
