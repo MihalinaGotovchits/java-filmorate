@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class Genre {
+public class Mpa {
     private Integer id;
     private String name;
 }
