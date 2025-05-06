@@ -1,69 +1,51 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
 
-@Slf4j
 @RestController
+@RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
 
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
-
-    @PostMapping("/films")
-    public Film create(@Valid @RequestBody Film film) {
+    @PostMapping
+    public Film create(@RequestBody Film film) {
         return filmService.create(film);
     }
 
-    @PutMapping("/films")
-    public Film update(@Valid @RequestBody Film newFilm) {
-        if (filmService.getFilmById(newFilm.getId()) == null) {
-            log.error(newFilm.toString());
-            throw new ConditionsNotMetException("Некорректный идентификатор");
-        }
+    @PutMapping
+    public Film update(@RequestBody Film newFilm) {
         return filmService.updateFilm(newFilm);
     }
 
-    @GetMapping("/films")
+    @GetMapping
     public Collection<Film> getAllFilms() {
         return filmService.getAllFilms();
     }
 
-    @GetMapping("/films/{filmId}")
-    public Film getFilmById(@PathVariable Long filmId) {
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable("id") long filmId) {
         return filmService.getFilmById(filmId);
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
-    public void addLike(
-            @PathVariable Long id,
-            @PathVariable Long userId) {
-        filmService.addLike(id, userId);
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
+        filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping("/films/{id}/like/{userId}")
-    public void deleteLike(
-            @PathVariable Long id,
-            @PathVariable Long userId) {
-        filmService.deleteLike(id, userId);
-    }
-
-    @GetMapping("/films/popular")
-    public Collection<Film> popularFilms(
-            @RequestParam(defaultValue = "10") Integer count) {
-        if (count < 0) {
-            throw new ConditionsNotMetException("count");
-        }
+    @GetMapping("/popular")
+    public Collection<Film> getMostPopular(@RequestParam(name = "count", defaultValue = "10") @Positive int count) {
         return filmService.getPopularFilm(count);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable("id") long filmId, @PathVariable("userId") long userId) {
+        filmService.deleteLike(filmId, userId);
     }
 }

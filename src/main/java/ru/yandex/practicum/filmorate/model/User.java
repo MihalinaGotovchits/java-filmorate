@@ -1,13 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -16,17 +19,21 @@ import java.util.Set;
 @EqualsAndHashCode()
 public class User {
     private Long id;
-    @NotBlank(message = "E-mail не может быть пустым.")
     @Email(message = "E-mail должен содержать '@'.")
     private String email;
-    @NotBlank(message = "Логин не может быть пустымю")
-    @Pattern(regexp = "^\\S*$", message = "Логин не может содержать пробелы")
     private String login;
     private String name;
-    @NotNull
-    @PastOrPresent(message = "Дата рождения не может быть в будущем. ")
     private LocalDate birthday;
+    @JsonIgnore
     private Set<Long> friends = new HashSet<>();
-    private Set<Long> films = new HashSet<>();
-    private FriendStatus friendStatus;
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("user_id", id);
+        values.put("email", email);
+        values.put("login", login);
+        values.put("name", name);
+        values.put("birthday", birthday.toString());
+        return values;
+    }
 }

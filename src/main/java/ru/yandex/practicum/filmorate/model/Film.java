@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Builder
@@ -16,20 +17,22 @@ import java.util.Set;
 @EqualsAndHashCode
 public class Film {
     private Long id;
-    @NotNull(message = "Введите название фильма")
-    @NotBlank(message = "Введите название фильма.")
     private String name;
-    @NotNull(message =  "Описание фильма не может быть пустым")
-    @NotBlank(message =  "Описание фильма не может быть пустым")
-    @Size(max = 200, message = "Описание не может превышать 200 символов.")
     private String description;
-    @NotNull(message =  "Дата фильма не может быть пустой")
     private LocalDate releaseDate;
-    @NotNull
-    @Positive(message = "Продолжительность фильма не может быть меньше 0.")
-    private int duration;
-    @Min(value = 0)
-    private int grade;
-    private String genre;
-    private Set<Genre> genres = new HashSet<>();
+    private Integer duration;
+    private Mpa mpa;
+    private final Set<Genre> genres = new HashSet<>();
+    private final Set<Long> likes = new HashSet<>();
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("film_id", id);
+        values.put("name", name);
+        values.put("description", description);
+        values.put("release_date", releaseDate.toString());
+        values.put("duration", duration);
+        values.put("rating_id", mpa == null ? null : mpa.getId());
+        return values;
+    }
 }
